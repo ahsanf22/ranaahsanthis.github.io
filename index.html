@@ -22,5 +22,13 @@
   </head>
   <body>
     <div id="root"></div>
+	<div class="spotlight"></div>
+<script>
+  const spotlight = document.querySelector('.spotlight');
+  window.addEventListener('mousemove', e => {
+    spotlight.style.setProperty('--mouse-x', `${e.clientX}px`);
+    spotlight.style.setProperty('--mouse-y', `${e.clientY}px`);
+  });
+</script>
   </body>
 </html>
