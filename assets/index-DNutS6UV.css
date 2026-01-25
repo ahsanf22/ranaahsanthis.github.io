@@ -48,7 +48,16 @@
 }
 
 .project-card:hover .tech-tag, 
-.experience-item:hover .tech-tag {
-  background: rgba(16, 185, 129, 0.2) !important;
-  border-color: rgba(16, 185, 129, 0.5) !important;
+/* Brittany Chiang Style: Academic & Experience Lift */
+.experience-item {
+  padding: 1rem;
+  border-radius: 0.75rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.experience-item:hover {
+  background: rgba(16, 185, 129, 0.03) !important;
+  backdrop-filter: blur(8px);
+  border-left: 2px solid #10b981 !important; /* Thicker emerald border on focus */
+  transform: translateX(10px);
 }
