@@ -40,6 +40,79 @@
         </div>
     </div>
 </div>
+<div id="game-container" style="display:none; position:fixed; top:80px; left:50%; transform:translateX(-50%); z-index:10000; font-family:monospace; min-width:250px;">
+    <div class="bg-black border-2 border-emerald-500 p-4 rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.5)] text-emerald-400">
+        <div class="text-[10px] uppercase tracking-[0.2em] mb-2 border-b border-emerald-500/30 pb-1">System Audit Active</div>
+        <div class="flex justify-between gap-6 text-sm font-bold">
+            <span>BUGS_FOUND: <span id="game-score">0</span></span>
+            <span>SEC_REMAINING: <span id="game-timer">30</span>s</span>
+        </div>
+    </div>
+</div>
+
+<div class="spotlight"></div>
+
+<script>
+  // 1. Spotlight Engine
+  const spotlight = document.querySelector('.spotlight');
+  window.addEventListener('mousemove', e => {
+    spotlight.style.setProperty('--mouse-x', `${e.clientX}px`);
+    spotlight.style.setProperty('--mouse-y', `${e.clientY}px`);
+  });
+
+  // 2. Bug Hunter Engine
+  let score = 0;
+  let timeLeft = 30;
+  let gameActive = false;
+
+  function startBugHunter() {
+      if(gameActive) return;
+      gameActive = true;
+      score = 0;
+      timeLeft = 30;
+      const container = document.getElementById('game-container');
+      container.style.display = 'block';
+      
+      const gameInterval = setInterval(() => {
+          timeLeft--;
+          document.getElementById('game-timer').innerText = timeLeft;
+          if(timeLeft <= 0) {
+              clearInterval(gameInterval);
+              gameActive = false;
+              container.style.display = 'none';
+              alert(`DEBRIEF: You caught ${score} discrepancies. Ahsan Khan would be proud.`);
+          }
+      }, 1000);
+      spawnBug();
+  }
+
+  function spawnBug() {
+      if(!gameActive) return;
+      const bug = document.createElement('div');
+      bug.innerHTML = '👾'; 
+      bug.style.cssText = `
+          position: fixed;
+          left: ${Math.random() * 80 + 10}vw;
+          top: ${Math.random() * 80 + 10}vh;
+          font-size: 40px;
+          cursor: pointer;
+          z-index: 10001;
+          filter: drop-shadow(0 0 10px red);
+          user-select: none;
+          transition: transform 0.1s ease;
+      `;
+      bug.onclick = () => {
+          score++;
+          document.getElementById('game-score').innerText = score;
+          bug.remove();
+          spawnBug();
+      };
+      document.body.appendChild(bug);
+      setTimeout(() => { if(bug.parentNode) bug.remove(); if(gameActive) spawnBug(); }, 1100);
+  }
+
+  window.addEventListener('keydown', (e) => { if (e.key.toLowerCase() === 't') startBugHunter(); });
+</script>
 
 <div class="spotlight"></div>
 
