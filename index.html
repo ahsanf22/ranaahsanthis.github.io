@@ -30,5 +30,77 @@
     spotlight.style.setProperty('--mouse-y', `${e.clientY}px`);
   });
 </script>
+
+<div id="game-container" style="display:none; position:fixed; top:20px; right:20px; z-index:10000; font-family:monospace;">
+    <div class="bg-slate-900 border border-emerald-500/50 p-4 rounded-lg shadow-2xl text-emerald-500">
+        <div class="text-[10px] uppercase tracking-widest mb-2">Internal Audit in Progress</div>
+        <div class="flex justify-between gap-4 text-sm font-bold">
+            <span>Bugs Caught: <span id="game-score">0</span></span>
+            <span>Time: <span id="game-timer">30</span>s</span>
+        </div>
+    </div>
+</div>
+
+<div class="spotlight"></div>
+
+<script>
+  // 1. Spotlight Tracker
+  const spotlight = document.querySelector('.spotlight');
+  window.addEventListener('mousemove', e => {
+    spotlight.style.setProperty('--mouse-x', `${e.clientX}px`);
+    spotlight.style.setProperty('--mouse-y', `${e.clientY}px`);
+  });
+
+  // 2. Bug Hunter Game Logic
+  let score = 0;
+  let timeLeft = 30;
+  let gameActive = false;
+
+  function startBugHunter() {
+      if(gameActive) return;
+      gameActive = true;
+      score = 0;
+      timeLeft = 30;
+      document.getElementById('game-container').style.display = 'block';
+      
+      const gameInterval = setInterval(() => {
+          timeLeft--;
+          document.getElementById('game-timer').innerText = timeLeft;
+          if(timeLeft <= 0) {
+              clearInterval(gameInterval);
+              gameActive = false;
+              alert(`Audit Complete! You identified ${score} discrepancies. Ahsan Khan would be proud.`);
+              document.getElementById('game-container').style.display = 'none';
+          }
+      }, 1000);
+      spawnBug();
+  }
+
+  function spawnBug() {
+      if(!gameActive) return;
+      const bug = document.createElement('div');
+      bug.innerHTML = '🪲';
+      bug.style.position = 'fixed';
+      bug.style.left = Math.random() * 90 + 'vw';
+      bug.style.top = Math.random() * 90 + 'vh';
+      bug.style.fontSize = '24px';
+      bug.style.cursor = 'crosshair';
+      bug.style.zIndex = '10001';
+      bug.onclick = () => {
+          score++;
+          document.getElementById('game-score').innerText = score;
+          bug.remove();
+          spawnBug();
+      };
+      document.body.appendChild(bug);
+      setTimeout(() => { if(bug.parentNode) bug.remove(); if(gameActive) spawnBug(); }, 1200);
+  }
+
+  // Trigger: Press 'T' to start
+  window.addEventListener('keydown', (e) => {
+      if (e.key.toLowerCase() === 't') startBugHunter();
+  });
+</script>
+
   </body>
 </html>
