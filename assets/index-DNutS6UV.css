@@ -140,3 +140,44 @@
   color: #34d399 !important;
   border: 1px solid rgba(16, 185, 129, 0.2) !important;
 }
+
+/* Custom Cursor Aesthetic */
+html, body {
+  cursor: none; /* Hides the default system cursor */
+}
+
+a, button, .project-card, .experience-item {
+  cursor: none !important;
+}
+
+.cursor-dot {
+  width: 6px;
+  height: 6px;
+  background-color: #10b981;
+  box-shadow: 0 0 10px #10b981;
+}
+
+.cursor-outline {
+  width: 30px;
+  height: 30px;
+  border: 2px solid rgba(16, 185, 129, 0.5);
+  transition: width 0.2s, height 0.2s, background-color 0.2s;
+}
+
+.cursor-dot, .cursor-outline {
+  position: fixed;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  z-index: 10002;
+  pointer-events: none; /* Important: prevents cursor from blocking clicks */
+}
+
+/* Expansion on Hover */
+.cursor-hover {
+  width: 50px;
+  height: 50px;
+  background-color: rgba(16, 185, 129, 0.1);
+  border-color: #10b981;
+}

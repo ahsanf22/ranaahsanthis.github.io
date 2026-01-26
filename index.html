@@ -23,6 +23,9 @@
   <body>
     <div id="root"></div>
 
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
     <div id="system-toast" style="position:fixed; bottom:20px; left:20px; z-index:9999; font-family:monospace; pointer-events:none; transition: opacity 0.5s ease;">
         <div class="bg-black/90 border border-emerald-500/50 p-3 rounded text-[10px] text-emerald-500 shadow-2xl">
             <span class="animate-pulse">●</span> SYSTEM_READY: PRESS <b class="text-white">[T]</b> TO RUN AUDIT_STRESS_TEST
@@ -30,7 +33,7 @@
     </div>
 
     <div id="game-container" style="display:none; position:fixed; top:80px; left:50%; transform:translateX(-50%); z-index:10000; font-family:monospace; min-width:280px;">
-        <div class="bg-black border-2 border-emerald-500 p-4 rounded-xl shadow-[0_0_30px_rgba(16,185,129,0.5)] text-emerald-400 text-center">
+        <div class="bg-black border-2 border-emerald-500 p-4 rounded-xl shadow-[0_0_30px_rgba(16,185,129,0.4)] text-emerald-400 text-center">
             <div class="text-[10px] uppercase tracking-[0.2em] mb-2 border-b border-emerald-500/30 pb-1">System Audit in Progress</div>
             <div class="flex justify-between gap-6 text-sm font-bold">
                 <span>BUGS_FOUND: <span id="game-score">0</span></span>
@@ -42,85 +45,65 @@
     <div class="spotlight"></div>
 
     <script>
-      /** 1. Spotlight Logic **/
       const spotlight = document.querySelector('.spotlight');
+      const cursorDot = document.querySelector('.cursor-dot');
+      const cursorOutline = document.querySelector('.cursor-outline');
+
       window.addEventListener('mousemove', e => {
-        spotlight.style.setProperty('--mouse-x', `${e.clientX}px`);
-        spotlight.style.setProperty('--mouse-y', `${e.clientY}px`);
+        const posX = e.clientX;
+        const posY = e.clientY;
+
+        // Update Spotlight
+        spotlight.style.setProperty('--mouse-x', `${posX}px`);
+        spotlight.style.setProperty('--mouse-y', `${posY}px`);
+
+        // Update Custom Cursor
+        cursorDot.style.left = `${posX}px`;
+        cursorDot.style.top = `${posY}px`;
+        
+        // Outline follows with a slight delay via CSS transition
+        cursorOutline.style.left = `${posX}px`;
+        cursorOutline.style.top = `${posY}px`;
       });
 
-      /** 2. Game Discoverability Logic **/
-      // Auto-hide the "Press T" toast after 8 seconds
-      setTimeout(() => {
-          const toast = document.getElementById('system-toast');
-          if (toast) toast.style.opacity = '0';
-      }, 8000);
+      // Handle Hover Expansion
+      document.addEventListener('mouseover', e => {
+        if (e.target.tagName === 'A' || e.target.closest('.project-card') || e.target.closest('.experience-item')) {
+          cursorOutline.classList.add('cursor-hover');
+        }
+      });
+      document.addEventListener('mouseout', e => {
+        cursorOutline.classList.remove('cursor-hover');
+      });
 
-      /** 3. Bug Hunter Engine **/
-      let score = 0;
-      let timeLeft = 30;
-      let gameActive = false;
-
+      // --- Bug Hunter Game Logic ---
+      let score = 0; let timeLeft = 30; let gameActive = false;
       function startBugHunter() {
           if(gameActive) return;
-          
-          // Hide the instructional toast immediately
-          const toast = document.getElementById('system-toast');
-          if (toast) toast.style.display = 'none';
-
-          gameActive = true;
-          score = 0;
-          timeLeft = 30;
+          gameActive = true; score = 0; timeLeft = 30;
+          document.getElementById('system-toast').style.display = 'none';
           document.getElementById('game-container').style.display = 'block';
-          
           const gameInterval = setInterval(() => {
-              timeLeft--;
-              document.getElementById('game-timer').innerText = timeLeft;
+              timeLeft--; document.getElementById('game-timer').innerText = timeLeft;
               if(timeLeft <= 0) {
-                  clearInterval(gameInterval);
-                  gameActive = false;
+                  clearInterval(gameInterval); gameActive = false;
                   document.getElementById('game-container').style.display = 'none';
-                  alert(`AUDIT COMPLETE: System verified. You caught ${score} discrepancies. Ahsan Khan would be proud.`);
+                  alert(`AUDIT COMPLETE: ${score} bugs caught.`);
               }
           }, 1000);
           spawnBug();
       }
-
       function spawnBug() {
           if(!gameActive) return;
           const bug = document.createElement('div');
-          // High-visibility purple monster with red glow
-          bug.innerHTML = '👾'; 
-          bug.style.cssText = `
-              position: fixed;
-              left: ${Math.random() * 80 + 10}vw;
-              top: ${Math.random() * 80 + 10}vh;
-              font-size: 45px;
-              cursor: crosshair;
-              z-index: 10001;
-              filter: drop-shadow(0 0 15px #ff0000);
-              user-select: none;
-              transition: transform 0.1s ease;
-          `;
-          
-          bug.onclick = () => {
-              score++;
-              document.getElementById('game-score').innerText = score;
-              bug.remove();
-              spawnBug();
-          };
-          
+          bug.innerHTML = '👾';
+          bug.style.cssText = `position:fixed; left:${Math.random()*80+10}vw; top:${Math.random()*80+10}vh; font-size:45px; cursor:crosshair; z-index:10001; filter:drop-shadow(0 0 15px #ff0000); user-select:none;`;
+          bug.onclick = () => { score++; document.getElementById('game-score').innerText = score; bug.remove(); spawnBug(); };
           document.body.appendChild(bug);
-          setTimeout(() => { 
-              if(bug.parentNode) bug.remove(); 
-              if(gameActive) spawnBug(); 
-          }, 1100);
+          setTimeout(() => { if(bug.parentNode) bug.remove(); if(gameActive) spawnBug(); }, 1100);
       }
-
-      // Keyboard Trigger
-      window.addEventListener('keydown', (e) => {
-          if (e.key.toLowerCase() === 't') startBugHunter();
-      });
+      window.addEventListener('keydown', e => { if (e.key.toLowerCase() === 't') startBugHunter(); });
+      setTimeout(() => { document.getElementById('system-toast').style.opacity = '0'; }, 8000);
     </script>
   </body>
 </html>
