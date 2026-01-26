@@ -36,7 +36,7 @@
     <div class="spotlight"></div>
 
     <script>
-      /* 1. MOUSE SPOTLIGHT LOGIC */
+      /* 1. SPOTLIGHT ENGINE */
       const spotlight = document.querySelector('.spotlight');
       window.addEventListener('mousemove', e => {
         spotlight.style.setProperty('--mouse-x', `${e.clientX}px`);
@@ -71,7 +71,7 @@
       function spawnBug() {
           if(!gameActive) return;
           const bug = document.createElement('div');
-          // High-contrast emoji with a red glow
+          // High-contrast monster emoji with a red glow
           bug.innerHTML = '👾'; 
           bug.style.cssText = `
               position: fixed;
@@ -93,12 +93,12 @@
           };
           
           document.body.appendChild(bug);
-          // Bug moves if not caught quickly
+          // Bug respawns/moves if not caught
           setTimeout(() => { if(bug.parentNode) bug.remove(); if(gameActive) spawnBug(); }, 1100);
       }
 
       /* 3. KEYBOARD TRIGGER */
-      // Press 'T' to start the audit
+      // Secret Key: Press 'T' to start the SQA stress test
       window.addEventListener('keydown', (e) => {
           if (e.key.toLowerCase() === 't') startBugHunter();
       });
