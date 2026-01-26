@@ -23,12 +23,12 @@
   <body>
     <div id="root"></div>
 
-    <div id="game-container" style="display:none; position:fixed; top:80px; left:50%; transform:translateX(-50%); z-index:10000; font-family:monospace; min-width:260px;">
-        <div class="bg-black border-2 border-emerald-500 p-4 rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.5)] text-emerald-400">
-            <div class="text-[10px] uppercase tracking-[0.2em] mb-2 border-b border-emerald-500/30 pb-1">System Audit Active</div>
+    <div id="game-container" style="display:none; position:fixed; top:80px; left:50%; transform:translateX(-50%); z-index:10000; font-family:monospace; min-width:280px;">
+        <div class="bg-black border-2 border-emerald-500 p-4 rounded-xl shadow-[0_0_30px_rgba(16,185,129,0.4)] text-emerald-400 text-center">
+            <div class="text-[10px] uppercase tracking-[0.2em] mb-2 border-b border-emerald-500/30 pb-1">System Audit in Progress</div>
             <div class="flex justify-between gap-6 text-sm font-bold">
                 <span>BUGS_FOUND: <span id="game-score">0</span></span>
-                <span>SEC_REMAINING: <span id="game-timer">30</span>s</span>
+                <span>SEC_LEFT: <span id="game-timer">30</span>s</span>
             </div>
         </div>
     </div>
@@ -36,20 +36,14 @@
     <div class="spotlight"></div>
 
     <script>
-      /**
-       * 1. Brittany Chiang Spotlight Engine
-       * Updates CSS variables for the mouse-following glow
-       */
+      /* 1. MOUSE SPOTLIGHT LOGIC */
       const spotlight = document.querySelector('.spotlight');
       window.addEventListener('mousemove', e => {
         spotlight.style.setProperty('--mouse-x', `${e.clientX}px`);
         spotlight.style.setProperty('--mouse-y', `${e.clientY}px`);
       });
 
-      /**
-       * 2. Bug Hunter SQA Game Logic
-       * Triggered by pressing 'T' on the keyboard
-       */
+      /* 2. BUG HUNTER GAME LOGIC */
       let score = 0;
       let timeLeft = 30;
       let gameActive = false;
@@ -59,9 +53,7 @@
           gameActive = true;
           score = 0;
           timeLeft = 30;
-          
-          const container = document.getElementById('game-container');
-          container.style.display = 'block';
+          document.getElementById('game-container').style.display = 'block';
           
           const gameInterval = setInterval(() => {
               timeLeft--;
@@ -69,8 +61,8 @@
               if(timeLeft <= 0) {
                   clearInterval(gameInterval);
                   gameActive = false;
-                  container.style.display = 'none';
-                  alert(`DEBRIEF: SQA Audit complete. You identified ${score} discrepancies. Ahsan Khan would be proud.`);
+                  document.getElementById('game-container').style.display = 'none';
+                  alert(`AUDIT COMPLETE: You caught ${score} bugs. System integrity verified by Ahsan Khan.`);
               }
           }, 1000);
           spawnBug();
@@ -79,16 +71,16 @@
       function spawnBug() {
           if(!gameActive) return;
           const bug = document.createElement('div');
-          // Purple monster emoji for high visibility against emerald/black theme
+          // High-contrast emoji with a red glow
           bug.innerHTML = '👾'; 
           bug.style.cssText = `
               position: fixed;
               left: ${Math.random() * 80 + 10}vw;
               top: ${Math.random() * 80 + 10}vh;
-              font-size: 40px;
-              cursor: pointer;
+              font-size: 45px;
+              cursor: crosshair;
               z-index: 10001;
-              filter: drop-shadow(0 0 10px red);
+              filter: drop-shadow(0 0 15px #ff0000);
               user-select: none;
               transition: transform 0.1s ease;
           `;
@@ -101,15 +93,12 @@
           };
           
           document.body.appendChild(bug);
-
-          // Bug moves/respawns every 1.1 seconds if not caught
-          setTimeout(() => { 
-              if(bug.parentNode) bug.remove(); 
-              if(gameActive) spawnBug(); 
-          }, 1100);
+          // Bug moves if not caught quickly
+          setTimeout(() => { if(bug.parentNode) bug.remove(); if(gameActive) spawnBug(); }, 1100);
       }
 
-      // Keyboard Listener for SQA Stress Test
+      /* 3. KEYBOARD TRIGGER */
+      // Press 'T' to start the audit
       window.addEventListener('keydown', (e) => {
           if (e.key.toLowerCase() === 't') startBugHunter();
       });
