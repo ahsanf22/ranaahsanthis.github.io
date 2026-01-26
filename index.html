@@ -23,8 +23,14 @@
   <body>
     <div id="root"></div>
 
+    <div id="system-toast" style="position:fixed; bottom:20px; left:20px; z-index:9999; font-family:monospace; pointer-events:none; transition: opacity 0.5s ease;">
+        <div class="bg-black/90 border border-emerald-500/50 p-3 rounded text-[10px] text-emerald-500 shadow-2xl">
+            <span class="animate-pulse">●</span> SYSTEM_READY: PRESS <b class="text-white">[T]</b> TO RUN AUDIT_STRESS_TEST
+        </div>
+    </div>
+
     <div id="game-container" style="display:none; position:fixed; top:80px; left:50%; transform:translateX(-50%); z-index:10000; font-family:monospace; min-width:280px;">
-        <div class="bg-black border-2 border-emerald-500 p-4 rounded-xl shadow-[0_0_30px_rgba(16,185,129,0.4)] text-emerald-400 text-center">
+        <div class="bg-black border-2 border-emerald-500 p-4 rounded-xl shadow-[0_0_30px_rgba(16,185,129,0.5)] text-emerald-400 text-center">
             <div class="text-[10px] uppercase tracking-[0.2em] mb-2 border-b border-emerald-500/30 pb-1">System Audit in Progress</div>
             <div class="flex justify-between gap-6 text-sm font-bold">
                 <span>BUGS_FOUND: <span id="game-score">0</span></span>
@@ -36,20 +42,32 @@
     <div class="spotlight"></div>
 
     <script>
-      /* 1. SPOTLIGHT ENGINE */
+      /** 1. Spotlight Logic **/
       const spotlight = document.querySelector('.spotlight');
       window.addEventListener('mousemove', e => {
         spotlight.style.setProperty('--mouse-x', `${e.clientX}px`);
         spotlight.style.setProperty('--mouse-y', `${e.clientY}px`);
       });
 
-      /* 2. BUG HUNTER GAME LOGIC */
+      /** 2. Game Discoverability Logic **/
+      // Auto-hide the "Press T" toast after 8 seconds
+      setTimeout(() => {
+          const toast = document.getElementById('system-toast');
+          if (toast) toast.style.opacity = '0';
+      }, 8000);
+
+      /** 3. Bug Hunter Engine **/
       let score = 0;
       let timeLeft = 30;
       let gameActive = false;
 
       function startBugHunter() {
           if(gameActive) return;
+          
+          // Hide the instructional toast immediately
+          const toast = document.getElementById('system-toast');
+          if (toast) toast.style.display = 'none';
+
           gameActive = true;
           score = 0;
           timeLeft = 30;
@@ -62,7 +80,7 @@
                   clearInterval(gameInterval);
                   gameActive = false;
                   document.getElementById('game-container').style.display = 'none';
-                  alert(`AUDIT COMPLETE: You caught ${score} bugs. System integrity verified by Ahsan Khan.`);
+                  alert(`AUDIT COMPLETE: System verified. You caught ${score} discrepancies. Ahsan Khan would be proud.`);
               }
           }, 1000);
           spawnBug();
@@ -71,7 +89,7 @@
       function spawnBug() {
           if(!gameActive) return;
           const bug = document.createElement('div');
-          // High-contrast monster emoji with a red glow
+          // High-visibility purple monster with red glow
           bug.innerHTML = '👾'; 
           bug.style.cssText = `
               position: fixed;
@@ -93,12 +111,13 @@
           };
           
           document.body.appendChild(bug);
-          // Bug respawns/moves if not caught
-          setTimeout(() => { if(bug.parentNode) bug.remove(); if(gameActive) spawnBug(); }, 1100);
+          setTimeout(() => { 
+              if(bug.parentNode) bug.remove(); 
+              if(gameActive) spawnBug(); 
+          }, 1100);
       }
 
-      /* 3. KEYBOARD TRIGGER */
-      // Secret Key: Press 'T' to start the SQA stress test
+      // Keyboard Trigger
       window.addEventListener('keydown', (e) => {
           if (e.key.toLowerCase() === 't') startBugHunter();
       });
