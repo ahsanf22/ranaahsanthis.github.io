@@ -49,24 +49,23 @@
       const cursorDot = document.querySelector('.cursor-dot');
       const cursorOutline = document.querySelector('.cursor-outline');
 
+      /** 1. Combined Cursor & Spotlight Engine **/
       window.addEventListener('mousemove', e => {
         const posX = e.clientX;
         const posY = e.clientY;
 
-        // Update Spotlight
+        // Update Mouse Spotlight
         spotlight.style.setProperty('--mouse-x', `${posX}px`);
         spotlight.style.setProperty('--mouse-y', `${posY}px`);
 
         // Update Custom Cursor
         cursorDot.style.left = `${posX}px`;
         cursorDot.style.top = `${posY}px`;
-        
-        // Outline follows with a slight delay via CSS transition
         cursorOutline.style.left = `${posX}px`;
         cursorOutline.style.top = `${posY}px`;
       });
 
-      // Handle Hover Expansion
+      // Cursor expansion on interactive elements
       document.addEventListener('mouseover', e => {
         if (e.target.tagName === 'A' || e.target.closest('.project-card') || e.target.closest('.experience-item')) {
           cursorOutline.classList.add('cursor-hover');
@@ -76,34 +75,64 @@
         cursorOutline.classList.remove('cursor-hover');
       });
 
-      // --- Bug Hunter Game Logic ---
+      /** 2. Game Discovery Logic **/
+      setTimeout(() => {
+          const toast = document.getElementById('system-toast');
+          if (toast) toast.style.opacity = '0';
+      }, 8000);
+
+      /** 3. Bug Hunter Engine **/
       let score = 0; let timeLeft = 30; let gameActive = false;
+
       function startBugHunter() {
           if(gameActive) return;
+          const toast = document.getElementById('system-toast');
+          if (toast) toast.style.display = 'none';
+
           gameActive = true; score = 0; timeLeft = 30;
-          document.getElementById('system-toast').style.display = 'none';
           document.getElementById('game-container').style.display = 'block';
+          
           const gameInterval = setInterval(() => {
-              timeLeft--; document.getElementById('game-timer').innerText = timeLeft;
+              timeLeft--;
+              document.getElementById('game-timer').innerText = timeLeft;
               if(timeLeft <= 0) {
-                  clearInterval(gameInterval); gameActive = false;
+                  clearInterval(gameInterval);
+                  gameActive = false;
                   document.getElementById('game-container').style.display = 'none';
-                  alert(`AUDIT COMPLETE: ${score} bugs caught.`);
+                  alert(`AUDIT COMPLETE: System verified. You caught ${score} discrepancies. Ahsan Khan would be proud.`);
               }
           }, 1000);
           spawnBug();
       }
+
       function spawnBug() {
           if(!gameActive) return;
           const bug = document.createElement('div');
-          bug.innerHTML = '👾';
-          bug.style.cssText = `position:fixed; left:${Math.random()*80+10}vw; top:${Math.random()*80+10}vh; font-size:45px; cursor:crosshair; z-index:10001; filter:drop-shadow(0 0 15px #ff0000); user-select:none;`;
-          bug.onclick = () => { score++; document.getElementById('game-score').innerText = score; bug.remove(); spawnBug(); };
+          bug.innerHTML = '👾'; 
+          bug.style.cssText = `
+              position: fixed;
+              left: ${Math.random() * 80 + 10}vw;
+              top: ${Math.random() * 80 + 10}vh;
+              font-size: 45px;
+              cursor: crosshair;
+              z-index: 10001;
+              filter: drop-shadow(0 0 15px #ff0000);
+              user-select: none;
+          `;
+          bug.onclick = () => {
+              score++;
+              document.getElementById('game-score').innerText = score;
+              bug.remove();
+              spawnBug();
+          };
           document.body.appendChild(bug);
           setTimeout(() => { if(bug.parentNode) bug.remove(); if(gameActive) spawnBug(); }, 1100);
       }
-      window.addEventListener('keydown', e => { if (e.key.toLowerCase() === 't') startBugHunter(); });
-      setTimeout(() => { document.getElementById('system-toast').style.opacity = '0'; }, 8000);
+
+      // Start game on [T] key
+      window.addEventListener('keydown', (e) => {
+          if (e.key.toLowerCase() === 't') startBugHunter();
+      });
     </script>
   </body>
 </html>
