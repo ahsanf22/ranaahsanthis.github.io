@@ -21,15 +21,6 @@
     <link rel="stylesheet" crossorigin href="assets/index-DNutS6UV.css">
   </head>
   <body>
-    <div id="root"></div>
-	<div class="spotlight"></div>
-<script>
-  const spotlight = document.querySelector('.spotlight');
-  window.addEventListener('mousemove', e => {
-    spotlight.style.setProperty('--mouse-x', `${e.clientX}px`);
-    spotlight.style.setProperty('--mouse-y', `${e.clientY}px`);
-  });
-</script>
 
 <div id="game-container" style="display:none; position:fixed; top:20px; right:20px; z-index:10000; font-family:monospace;">
     <div class="bg-slate-900 border border-emerald-500/50 p-4 rounded-lg shadow-2xl text-emerald-500">
@@ -40,15 +31,16 @@
         </div>
     </div>
 </div>
-<div id="game-container" style="display:none; position:fixed; top:80px; left:50%; transform:translateX(-50%); z-index:10000; font-family:monospace; min-width:250px;">
-    <div class="bg-black border-2 border-emerald-500 p-4 rounded-xl shadow-[0_0_20px_rgba(16,185,129,0.5)] text-emerald-400">
-        <div class="text-[10px] uppercase tracking-[0.2em] mb-2 border-b border-emerald-500/30 pb-1">System Audit Active</div>
-        <div class="flex justify-between gap-6 text-sm font-bold">
-            <span>BUGS_FOUND: <span id="game-score">0</span></span>
-            <span>SEC_REMAINING: <span id="game-timer">30</span>s</span>
-        </div>
-    </div>
-</div>
+
+    <div id="root"></div>
+	<div class="spotlight"></div>
+<script>
+  const spotlight = document.querySelector('.spotlight');
+  window.addEventListener('mousemove', e => {
+    spotlight.style.setProperty('--mouse-x', `${e.clientX}px`);
+    spotlight.style.setProperty('--mouse-y', `${e.clientY}px`);
+  });
+</script>
 
 <div class="spotlight"></div>
 
