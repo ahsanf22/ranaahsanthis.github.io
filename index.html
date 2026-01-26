@@ -22,25 +22,13 @@
 
     <style>
       /* --- Custom Emerald Scrollbar --- */
-      ::-webkit-scrollbar {
-        width: 8px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #020617; /* Dark blue-black */
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #10b981; /* Emerald */
-        border-radius: 10px;
-        border: 2px solid #020617;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #34d399; /* Lighter Emerald */
-      }
+      ::-webkit-scrollbar { width: 8px; }
+      ::-webkit-scrollbar-track { background: #020617; }
+      ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 10px; border: 2px solid #020617; }
+      ::-webkit-scrollbar-thumb:hover { background: #34d399; }
 
       /* --- Custom Cursor Styles --- */
-      html, body {
-        cursor: none !important; /* Hide system cursor */
-      }
+      html, body { cursor: none !important; }
       .cursor-dot {
         width: 6px; height: 6px; background: #10b981; position: fixed;
         border-radius: 50%; z-index: 10002; pointer-events: none; transform: translate(-50%, -50%);
@@ -51,8 +39,16 @@
         border-radius: 50%; z-index: 10002; pointer-events: none; transform: translate(-50%, -50%);
         transition: width 0.2s, height 0.2s, background-color 0.2s;
       }
-      .cursor-hover {
-        width: 50px; height: 50px; background: rgba(16, 185, 129, 0.1); border-color: #10b981;
+      .cursor-hover { width: 50px; height: 50px; background: rgba(16, 185, 129, 0.1); border-color: #10b981; }
+
+      /* --- Custom Result Modal --- */
+      #game-modal {
+        display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85);
+        z-index:20000; align-items:center; justify-content:center; backdrop-filter: blur(4px);
+      }
+      .modal-content {
+        background:#0a0a0a; border:1px solid #10b981; padding:2rem; border-radius:1rem;
+        text-align:center; max-width:400px; font-family:monospace; box-shadow: 0 0 30px rgba(16,185,129,0.2);
       }
     </style>
   </head>
@@ -78,6 +74,14 @@
         </div>
     </div>
 
+    <div id="game-modal">
+        <div class="modal-content">
+            <h2 class="text-emerald-500 font-bold text-xl mb-4 uppercase tracking-tighter">Audit Summary</h2>
+            <p id="modal-text" class="text-white/70 mb-6 text-sm"></p>
+            <button onclick="closeModal()" style="background:#10b981; color:#000; border:none; padding:8px 20px; border-radius:4px; font-weight:bold; cursor:pointer; font-family:inherit;">CONFIRM_LOGS</button>
+        </div>
+    </div>
+
     <div class="spotlight"></div>
 
     <script>
@@ -85,37 +89,29 @@
       const cursorDot = document.querySelector('.cursor-dot');
       const cursorOutline = document.querySelector('.cursor-outline');
 
-      /** 1. Combined Cursor & Spotlight Engine **/
+      /* 1. CURSOR & SPOTLIGHT ENGINE */
       window.addEventListener('mousemove', e => {
-        const posX = e.clientX;
-        const posY = e.clientY;
-
+        const { clientX: posX, clientY: posY } = e;
         spotlight.style.setProperty('--mouse-x', `${posX}px`);
         spotlight.style.setProperty('--mouse-y', `${posY}px`);
-
-        cursorDot.style.left = `${posX}px`;
-        cursorDot.style.top = `${posY}px`;
-        cursorOutline.style.left = `${posX}px`;
-        cursorOutline.style.top = `${posY}px`;
+        cursorDot.style.left = `${posX}px`; cursorDot.style.top = `${posY}px`;
+        cursorOutline.style.left = `${posX}px`; cursorOutline.style.top = `${posY}px`;
       });
 
-      // Hover expansion
       document.addEventListener('mouseover', e => {
-        if (e.target.tagName === 'A' || e.target.closest('.project-card') || e.target.closest('.experience-item')) {
+        if (e.target.tagName === 'A' || e.target.closest('.project-card') || e.target.closest('.experience-item')) 
           cursorOutline.classList.add('cursor-hover');
-        }
       });
-      document.addEventListener('mouseout', e => {
-        cursorOutline.classList.remove('cursor-hover');
-      });
+      document.addEventListener('mouseout', () => cursorOutline.classList.remove('cursor-hover'));
 
-      /** 2. Bug Hunter Game Logic **/
+      /* 2. GAME LOGIC */
       let score = 0; let timeLeft = 30; let gameActive = false;
 
       function startBugHunter() {
           if(gameActive) return;
           document.getElementById('system-toast').style.display = 'none';
           gameActive = true; score = 0; timeLeft = 30;
+          document.getElementById('game-score').innerText = 0;
           document.getElementById('game-container').style.display = 'block';
           
           const gameInterval = setInterval(() => {
@@ -125,7 +121,7 @@
                   clearInterval(gameInterval);
                   gameActive = false;
                   document.getElementById('game-container').style.display = 'none';
-                  alert(`AUDIT COMPLETE: You caught ${score} discrepancies. Ahsan Khan would be proud.`);
+                  showModal(`Audit Complete! You identified ${score} discrepancies. System integrity verified.`);
               }
           }, 1000);
           spawnBug();
@@ -135,36 +131,20 @@
           if(!gameActive) return;
           const bug = document.createElement('div');
           bug.innerHTML = '👾'; 
-          bug.style.cssText = `
-              position: fixed;
-              left: ${Math.random() * 80 + 10}vw;
-              top: ${Math.random() * 80 + 10}vh;
-              font-size: 45px;
-              cursor: crosshair;
-              z-index: 10001;
-              filter: drop-shadow(0 0 15px #ff0000);
-              user-select: none;
-          `;
-          bug.onclick = () => {
-              score++;
-              document.getElementById('game-score').innerText = score;
-              bug.remove();
-              spawnBug();
-          };
+          bug.style.cssText = `position:fixed; left:${Math.random()*80+10}vw; top:${Math.random()*80+10}vh; font-size:45px; z-index:10001; filter:drop-shadow(0 0 15px #ff0000); user-select:none;`;
+          bug.onmousedown = () => { score++; document.getElementById('game-score').innerText = score; bug.remove(); spawnBug(); };
           document.body.appendChild(bug);
           setTimeout(() => { if(bug.parentNode) bug.remove(); if(gameActive) spawnBug(); }, 1100);
       }
 
-      // Keyboard Trigger
-      window.addEventListener('keydown', (e) => {
-          if (e.key.toLowerCase() === 't') startBugHunter();
-      });
+      function showModal(text) {
+          document.getElementById('modal-text').innerText = text;
+          document.getElementById('game-modal').style.display = 'flex';
+      }
+      function closeModal() { document.getElementById('game-modal').style.display = 'none'; }
 
-      // Hide toast after 8 seconds
-      setTimeout(() => {
-          const toast = document.getElementById('system-toast');
-          if (toast) toast.style.opacity = '0';
-      }, 8000);
+      window.addEventListener('keydown', e => { if (e.key.toLowerCase() === 't') startBugHunter(); });
+      setTimeout(() => { if(document.getElementById('system-toast')) document.getElementById('system-toast').style.opacity = '0'; }, 8000);
     </script>
   </body>
 </html>
