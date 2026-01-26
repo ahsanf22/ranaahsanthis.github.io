@@ -59,9 +59,8 @@
     <div class="cursor-outline"></div>
 
     <div id="system-toast" style="position:fixed; bottom:20px; left:20px; z-index:9999; font-family:monospace; pointer-events:none; transition: opacity 0.5s ease;">
-        <div class="bg-black/90 border border-emerald-500/50 p-3 rounded text-[10px] text-emerald-500 shadow-2xl">
-            <span class="animate-pulse">●</span> SYSTEM_READY: PRESS <b class="text-white">[T]</b> TO RUN AUDIT_STRESS_TEST
-        </div>
+        <div id="toast-content" class="bg-black/90 border border-emerald-500/50 p-3 rounded text-[10px] text-emerald-500 shadow-2xl">
+            </div>
     </div>
 
     <div id="game-container" style="display:none; position:fixed; top:80px; left:50%; transform:translateX(-50%); z-index:10000; font-family:monospace; min-width:280px;">
@@ -88,6 +87,7 @@
       const spotlight = document.querySelector('.spotlight');
       const cursorDot = document.querySelector('.cursor-dot');
       const cursorOutline = document.querySelector('.cursor-outline');
+      const toastContent = document.getElementById('toast-content');
 
       /* 1. CURSOR & SPOTLIGHT ENGINE */
       window.addEventListener('mousemove', e => {
@@ -104,12 +104,26 @@
       });
       document.addEventListener('mouseout', () => cursorOutline.classList.remove('cursor-hover'));
 
-      /* 2. GAME LOGIC */
-      let score = 0; let timeLeft = 30; let gameActive = false;
+      /* 2. TYPEWRITER BOOT LOGIC */
+      const bootMessage = "SYSTEM_READY: PRESS [T] TO RUN AUDIT_STRESS_TEST";
+      let charIndex = 0;
+      function typeBootMessage() {
+          if (charIndex < bootMessage.length) {
+              toastContent.innerHTML = `<span style="color: #10b981; margin-right: 5px;">●</span>` + bootMessage.substring(0, charIndex + 1) + `<span class="animate-pulse">_</span>`;
+              charIndex++;
+              setTimeout(typeBootMessage, 50);
+          } else {
+              toastContent.innerHTML = `<span style="color: #10b981; margin-right: 5px;">●</span>` + bootMessage;
+              setTimeout(() => { document.getElementById('system-toast').style.opacity = '0'; }, 8000);
+          }
+      }
+      window.addEventListener('load', typeBootMessage);
 
+      /* 3. GAME LOGIC */
+      let score = 0; let timeLeft = 30; let gameActive = false;
       function startBugHunter() {
           if(gameActive) return;
-          if(document.getElementById('system-toast')) document.getElementById('system-toast').style.display = 'none';
+          document.getElementById('system-toast').style.display = 'none';
           gameActive = true; score = 0; timeLeft = 30;
           document.getElementById('game-score').innerText = 0;
           document.getElementById('game-container').style.display = 'block';
@@ -121,7 +135,7 @@
                   clearInterval(gameInterval);
                   gameActive = false;
                   document.getElementById('game-container').style.display = 'none';
-                  showModal(`Audit Complete! You identified ${score} discrepancies. System integrity verified.`);
+                  showModal(`Audit Complete! You identified ${score} bugs. System integrity verified.`);
               }
           }, 1000);
           spawnBug();
@@ -144,7 +158,6 @@
       function closeModal() { document.getElementById('game-modal').style.display = 'none'; }
 
       window.addEventListener('keydown', e => { if (e.key.toLowerCase() === 't') startBugHunter(); });
-      setTimeout(() => { if(document.getElementById('system-toast')) document.getElementById('system-toast').style.opacity = '0'; }, 8000);
     </script>
   </body>
 </html>
