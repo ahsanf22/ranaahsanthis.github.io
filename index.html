@@ -8,61 +8,30 @@
       gtag('js', new Date());
       gtag('config', 'G-44VH5NLG9S');
     </script>
-
     <meta charset="UTF-8" />
-    <meta name="description" content="Ahsan Khan | Lead SQA Engineer & Quality Architect based in Florence, Italy. Specializing in Playwright automation, C# .NET, and high-precision manual auditing.">
-    <meta name="keywords" content="SQA Lead, Software Test Engineer, Playwright Automation, Florence Italy, ISTQB Certified">
-    
-    <link rel="icon" type="image/png" href="favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Ahsan Khan | Quality Architect</title>
-    
     <script type="module" crossorigin src="assets/index-flvT6NHH.js"></script>
     <link rel="stylesheet" crossorigin href="assets/index-DNutS6UV.css">
-
     <style>
-      /* --- Custom Emerald Scrollbar --- */
       ::-webkit-scrollbar { width: 8px; }
       ::-webkit-scrollbar-track { background: #020617; }
       ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 10px; border: 2px solid #020617; }
-      ::-webkit-scrollbar-thumb:hover { background: #34d399; }
-
-      /* --- Custom Cursor Styles --- */
       html, body { cursor: none !important; }
-      .cursor-dot {
-        width: 6px; height: 6px; background: #10b981; position: fixed;
-        border-radius: 50%; z-index: 100000; pointer-events: none; transform: translate(-50%, -50%);
-        box-shadow: 0 0 10px #10b981;
-      }
-      .cursor-outline {
-        width: 30px; height: 30px; border: 2px solid rgba(16, 185, 129, 0.5); position: fixed;
-        border-radius: 50%; z-index: 100000; pointer-events: none; transform: translate(-50%, -50%);
-        transition: width 0.2s, height 0.2s, background-color 0.2s;
-      }
+      .cursor-dot { width: 6px; height: 6px; background: #10b981; position: fixed; border-radius: 50%; z-index: 100000; pointer-events: none; transform: translate(-50%, -50%); box-shadow: 0 0 10px #10b981; }
+      .cursor-outline { width: 30px; height: 30px; border: 2px solid rgba(16, 185, 129, 0.5); position: fixed; border-radius: 50%; z-index: 100000; pointer-events: none; transform: translate(-50%, -50%); transition: width 0.2s, height 0.2s; }
       .cursor-hover { width: 50px; height: 50px; background: rgba(16, 185, 129, 0.1); border-color: #10b981; }
-
-      /* --- Custom Result Modal --- */
-      #game-modal {
-        display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85);
-        z-index:20000; align-items:center; justify-content:center; backdrop-filter: blur(4px);
-      }
-      .modal-content {
-        background:#0a0a0a; border:1px solid #10b981; padding:2rem; border-radius:1rem;
-        text-align:center; max-width:400px; font-family:monospace; box-shadow: 0 0 30px rgba(16,185,129,0.2);
-      }
+      #game-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:20000; align-items:center; justify-content:center; backdrop-filter: blur(4px); }
+      .modal-content { background:#0a0a0a; border:1px solid #10b981; padding:2rem; border-radius:1rem; text-align:center; max-width:400px; font-family:monospace; }
     </style>
   </head>
   <body>
     <div id="root"></div>
-
     <div class="cursor-dot"></div>
     <div class="cursor-outline"></div>
-
     <div id="system-toast" style="position:fixed; bottom:20px; left:20px; z-index:9999; font-family:monospace; pointer-events:none; transition: opacity 0.5s ease;">
-        <div id="toast-content" class="bg-black/90 border border-emerald-500/50 p-3 rounded text-[10px] text-emerald-500 shadow-2xl">
-            </div>
+        <div id="toast-content" class="bg-black/90 border border-emerald-500/50 p-3 rounded text-[10px] text-emerald-500 shadow-2xl"></div>
     </div>
-
     <div id="game-container" style="display:none; position:fixed; top:80px; left:50%; transform:translateX(-50%); z-index:10000; font-family:monospace; min-width:280px;">
         <div class="bg-black border-2 border-emerald-500 p-4 rounded-xl shadow-[0_0_30px_rgba(16,185,129,0.4)] text-emerald-400 text-center">
             <div class="text-[10px] uppercase tracking-[0.2em] mb-2 border-b border-emerald-500/30 pb-1">System Audit in Progress</div>
@@ -72,24 +41,14 @@
             </div>
         </div>
     </div>
-
-    <div id="game-modal">
-        <div class="modal-content">
-            <h2 class="text-emerald-500 font-bold text-xl mb-4 uppercase tracking-tighter">Audit Summary</h2>
-            <p id="modal-text" class="text-white/70 mb-6 text-sm"></p>
-            <button onclick="closeModal()" style="background:#10b981; color:#000; border:none; padding:10px 24px; border-radius:4px; font-weight:bold; cursor:none !important; font-family:inherit;">CONFIRM_LOGS</button>
-        </div>
-    </div>
-
+    <div id="game-modal"><div class="modal-content"><h2 class="text-emerald-500 font-bold text-xl mb-4 uppercase">Audit Summary</h2><p id="modal-text" class="text-white/70 mb-6 text-sm"></p><button onclick="closeModal()" style="background:#10b981; color:#000; border:none; padding:10px 24px; border-radius:4px; font-weight:bold; cursor:none !important;">CONFIRM_LOGS</button></div></div>
     <div class="spotlight"></div>
-
     <script>
       const spotlight = document.querySelector('.spotlight');
       const cursorDot = document.querySelector('.cursor-dot');
       const cursorOutline = document.querySelector('.cursor-outline');
       const toastContent = document.getElementById('toast-content');
 
-      /* 1. CURSOR & SPOTLIGHT ENGINE */
       window.addEventListener('mousemove', e => {
         const { clientX: posX, clientY: posY } = e;
         spotlight.style.setProperty('--mouse-x', `${posX}px`);
@@ -104,7 +63,6 @@
       });
       document.addEventListener('mouseout', () => cursorOutline.classList.remove('cursor-hover'));
 
-      /* 2. TYPEWRITER BOOT LOGIC */
       const bootMessage = "SYSTEM_READY: PRESS [T], CLICK ISTQB, OR VISIT /GITHUB";
       let charIndex = 0;
       function typeBootMessage() {
@@ -119,7 +77,6 @@
       }
       window.addEventListener('load', typeBootMessage);
 
-      /* 3. GAME LOGIC */
       let score = 0; let timeLeft = 30; let gameActive = false;
       function startBugHunter() {
           if(gameActive) return;
@@ -127,16 +84,9 @@
           gameActive = true; score = 0; timeLeft = 30;
           document.getElementById('game-score').innerText = 0;
           document.getElementById('game-container').style.display = 'block';
-          
           const gameInterval = setInterval(() => {
-              timeLeft--;
-              document.getElementById('game-timer').innerText = timeLeft;
-              if(timeLeft <= 0) {
-                  clearInterval(gameInterval);
-                  gameActive = false;
-                  document.getElementById('game-container').style.display = 'none';
-                  showModal(`Audit Complete! You identified ${score} bugs. System integrity verified.`);
-              }
+              timeLeft--; document.getElementById('game-timer').innerText = timeLeft;
+              if(timeLeft <= 0) { clearInterval(gameInterval); gameActive = false; document.getElementById('game-container').style.display = 'none'; showModal(`Audit Complete! You identified ${score} bugs.`); }
           }, 1000);
           spawnBug();
       }
@@ -151,12 +101,8 @@
           setTimeout(() => { if(bug.parentNode) bug.remove(); if(gameActive) spawnBug(); }, 1100);
       }
 
-      function showModal(text) {
-          document.getElementById('modal-text').innerText = text;
-          document.getElementById('game-modal').style.display = 'flex';
-      }
+      function showModal(text) { document.getElementById('modal-text').innerText = text; document.getElementById('game-modal').style.display = 'flex'; }
       function closeModal() { document.getElementById('game-modal').style.display = 'none'; }
-
       window.addEventListener('keydown', e => { if (e.key.toLowerCase() === 't') startBugHunter(); });
     </script>
   </body>
