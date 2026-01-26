@@ -19,6 +19,42 @@
     
     <script type="module" crossorigin src="assets/index-flvT6NHH.js"></script>
     <link rel="stylesheet" crossorigin href="assets/index-DNutS6UV.css">
+
+    <style>
+      /* --- Custom Emerald Scrollbar --- */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #020617; /* Dark blue-black */
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #10b981; /* Emerald */
+        border-radius: 10px;
+        border: 2px solid #020617;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #34d399; /* Lighter Emerald */
+      }
+
+      /* --- Custom Cursor Styles --- */
+      html, body {
+        cursor: none !important; /* Hide system cursor */
+      }
+      .cursor-dot {
+        width: 6px; height: 6px; background: #10b981; position: fixed;
+        border-radius: 50%; z-index: 10002; pointer-events: none; transform: translate(-50%, -50%);
+        box-shadow: 0 0 10px #10b981;
+      }
+      .cursor-outline {
+        width: 30px; height: 30px; border: 2px solid rgba(16, 185, 129, 0.5); position: fixed;
+        border-radius: 50%; z-index: 10002; pointer-events: none; transform: translate(-50%, -50%);
+        transition: width 0.2s, height 0.2s, background-color 0.2s;
+      }
+      .cursor-hover {
+        width: 50px; height: 50px; background: rgba(16, 185, 129, 0.1); border-color: #10b981;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
@@ -54,18 +90,16 @@
         const posX = e.clientX;
         const posY = e.clientY;
 
-        // Update Mouse Spotlight
         spotlight.style.setProperty('--mouse-x', `${posX}px`);
         spotlight.style.setProperty('--mouse-y', `${posY}px`);
 
-        // Update Custom Cursor
         cursorDot.style.left = `${posX}px`;
         cursorDot.style.top = `${posY}px`;
         cursorOutline.style.left = `${posX}px`;
         cursorOutline.style.top = `${posY}px`;
       });
 
-      // Cursor expansion on interactive elements
+      // Hover expansion
       document.addEventListener('mouseover', e => {
         if (e.target.tagName === 'A' || e.target.closest('.project-card') || e.target.closest('.experience-item')) {
           cursorOutline.classList.add('cursor-hover');
@@ -75,20 +109,12 @@
         cursorOutline.classList.remove('cursor-hover');
       });
 
-      /** 2. Game Discovery Logic **/
-      setTimeout(() => {
-          const toast = document.getElementById('system-toast');
-          if (toast) toast.style.opacity = '0';
-      }, 8000);
-
-      /** 3. Bug Hunter Engine **/
+      /** 2. Bug Hunter Game Logic **/
       let score = 0; let timeLeft = 30; let gameActive = false;
 
       function startBugHunter() {
           if(gameActive) return;
-          const toast = document.getElementById('system-toast');
-          if (toast) toast.style.display = 'none';
-
+          document.getElementById('system-toast').style.display = 'none';
           gameActive = true; score = 0; timeLeft = 30;
           document.getElementById('game-container').style.display = 'block';
           
@@ -99,7 +125,7 @@
                   clearInterval(gameInterval);
                   gameActive = false;
                   document.getElementById('game-container').style.display = 'none';
-                  alert(`AUDIT COMPLETE: System verified. You caught ${score} discrepancies. Ahsan Khan would be proud.`);
+                  alert(`AUDIT COMPLETE: You caught ${score} discrepancies. Ahsan Khan would be proud.`);
               }
           }, 1000);
           spawnBug();
@@ -129,10 +155,16 @@
           setTimeout(() => { if(bug.parentNode) bug.remove(); if(gameActive) spawnBug(); }, 1100);
       }
 
-      // Start game on [T] key
+      // Keyboard Trigger
       window.addEventListener('keydown', (e) => {
           if (e.key.toLowerCase() === 't') startBugHunter();
       });
+
+      // Hide toast after 8 seconds
+      setTimeout(() => {
+          const toast = document.getElementById('system-toast');
+          if (toast) toast.style.opacity = '0';
+      }, 8000);
     </script>
   </body>
 </html>
