@@ -31,12 +31,12 @@
       html, body { cursor: none !important; }
       .cursor-dot {
         width: 6px; height: 6px; background: #10b981; position: fixed;
-        border-radius: 50%; z-index: 10002; pointer-events: none; transform: translate(-50%, -50%);
+        border-radius: 50%; z-index: 100000; pointer-events: none; transform: translate(-50%, -50%);
         box-shadow: 0 0 10px #10b981;
       }
       .cursor-outline {
         width: 30px; height: 30px; border: 2px solid rgba(16, 185, 129, 0.5); position: fixed;
-        border-radius: 50%; z-index: 10002; pointer-events: none; transform: translate(-50%, -50%);
+        border-radius: 50%; z-index: 100000; pointer-events: none; transform: translate(-50%, -50%);
         transition: width 0.2s, height 0.2s, background-color 0.2s;
       }
       .cursor-hover { width: 50px; height: 50px; background: rgba(16, 185, 129, 0.1); border-color: #10b981; }
@@ -78,7 +78,7 @@
         <div class="modal-content">
             <h2 class="text-emerald-500 font-bold text-xl mb-4 uppercase tracking-tighter">Audit Summary</h2>
             <p id="modal-text" class="text-white/70 mb-6 text-sm"></p>
-            <button onclick="closeModal()" style="background:#10b981; color:#000; border:none; padding:8px 20px; border-radius:4px; font-weight:bold; cursor:pointer; font-family:inherit;">CONFIRM_LOGS</button>
+            <button onclick="closeModal()" style="background:#10b981; color:#000; border:none; padding:10px 24px; border-radius:4px; font-weight:bold; cursor:none !important; font-family:inherit;">CONFIRM_LOGS</button>
         </div>
     </div>
 
@@ -99,7 +99,7 @@
       });
 
       document.addEventListener('mouseover', e => {
-        if (e.target.tagName === 'A' || e.target.closest('.project-card') || e.target.closest('.experience-item')) 
+        if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.closest('.project-card') || e.target.closest('.experience-item')) 
           cursorOutline.classList.add('cursor-hover');
       });
       document.addEventListener('mouseout', () => cursorOutline.classList.remove('cursor-hover'));
@@ -109,7 +109,7 @@
 
       function startBugHunter() {
           if(gameActive) return;
-          document.getElementById('system-toast').style.display = 'none';
+          if(document.getElementById('system-toast')) document.getElementById('system-toast').style.display = 'none';
           gameActive = true; score = 0; timeLeft = 30;
           document.getElementById('game-score').innerText = 0;
           document.getElementById('game-container').style.display = 'block';
@@ -131,7 +131,7 @@
           if(!gameActive) return;
           const bug = document.createElement('div');
           bug.innerHTML = '👾'; 
-          bug.style.cssText = `position:fixed; left:${Math.random()*80+10}vw; top:${Math.random()*80+10}vh; font-size:45px; z-index:10001; filter:drop-shadow(0 0 15px #ff0000); user-select:none;`;
+          bug.style.cssText = `position:fixed; left:${Math.random()*80+10}vw; top:${Math.random()*80+10}vh; font-size:45px; z-index:10001; filter:drop-shadow(0 0 15px #ff0000); user-select:none; cursor:none !important;`;
           bug.onmousedown = () => { score++; document.getElementById('game-score').innerText = score; bug.remove(); spawnBug(); };
           document.body.appendChild(bug);
           setTimeout(() => { if(bug.parentNode) bug.remove(); if(gameActive) spawnBug(); }, 1100);
